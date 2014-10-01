@@ -429,6 +429,27 @@ accept it or skip it."
 	      (forward-char)))))))
 
 ;;;###autoload
+(defun emmet-find-enclosing-tag-boundaries ()
+  (let ((beg nil)
+        (end nil))
+  (save-excursion
+    (autoload 'sgml-skip-tag-backward "sgml-mode.elc")
+    (autoload 'sgml-skip-tag-forward "sgml-mode.elc")
+    (sgml-skip-tag-backward 1)
+    (setq beg (point))
+    (sgml-skip-tag-forward 1)
+    (setq end (point))
+    (list beg end))))
+
+;;;###autoload
+(defun emmet-mark-enclosing-tag (arg)
+  (interactive "p")
+  (cl-destructuring-bind (beg end) (emmet-find-enclosing-tag-boundaries)
+    (push-mark beg)
+    (activate-mark)
+    (goto-char end)))
+
+;;;###autoload
 (defun emmet-wrap-with-markup (wrap-with)
   "Wrap region with markup."
   (interactive "sExpression to wrap with: ")
